@@ -123,6 +123,7 @@ process_data <- function(file_path) {
   list(data1 = data1, data2 = data2)
 }
 
+
 prepare_global_prediction_data <- function(data_pred, data2, save_dir = "./Results") {
   # Step 1: Replace invalid values with NA and filter rows
   data_pred <- data_pred %>%
@@ -192,6 +193,8 @@ prepare_global_prediction_data <- function(data_pred, data2, save_dir = "./Resul
   
   return(list(data_pred = data_pred, data2 = data2, SD_pred = SD_pred))
 }
+
+
 prep_data_pred <- function(data1, data_pred, interactions = FALSE) {
   #######################################################################
   # Step 1: Outcomes
@@ -284,6 +287,8 @@ prep_data_pred <- function(data1, data_pred, interactions = FALSE) {
   
   return(result)
 }
+
+
 call_jags_full_model <- function(n, n_c, n_s, theta_hat, sigma2_hat_inv, x, p_x, z, w, super_region,n.chains,n.iter,thin) {
   
   ##############
@@ -377,6 +382,47 @@ call_jags_full_model <- function(n, n_c, n_s, theta_hat, sigma2_hat_inv, x, p_x,
   # result <- list("posterior_samples" = posterior_samples, "DIC" = dic)
   
   return(posterior_samples)
+}
+
+
+eta_summary <- function(data2,posterior_samples){
+  chains<-length(posterior_samples)
+  final<-posterior_samples[[1]]
+  for(j in 2:chains){
+    final<-rbind(final,
+                 posterior_samples[[j]])
+  }
+  
+  eta0<-final[,(substring(colnames(final), 1, 4) == "eta0")]
+  eta1<-final[,(substring(colnames(final), 1, 4) == "eta1")]
+  
+  efficacy_ve<-1.00 - exp(eta0)
+  effectiveness_ve<-1.00 - exp(eta1)
+  
+  #efficacy_vars<-1-exp(eta0_var)
+  
+  output<-data.frame(data2$CountryCode,
+                     colMedians(efficacy_ve),
+                     colQuantiles(efficacy_ve,probs=0.025),
+                     colQuantiles(efficacy_ve,probs=0.975),
+                     colVars(efficacy_ve),
+                     colMedians(effectiveness_ve),
+                     colQuantiles(effectiveness_ve,probs=0.025),
+                     colQuantiles(effectiveness_ve,probs=0.975),
+                     colVars(effectiveness_ve))
+  colnames(output)<-c("Country.Code",
+                      "VE_Efficacy",
+                      "LCI_VE_Efficacy",
+                      "UCI_VE_Efficacy",
+                      "Variance_Efficacy",
+                      "VE_Effectiveness",
+                      "LCI_VE_Effectiveness",
+                      "UCI_VE_Effectiveness",
+                      "Variance_Effectiveness")
+  
+  
+  
+  return(output)
 }
 
 
