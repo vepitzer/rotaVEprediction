@@ -23,12 +23,12 @@ data2 <- processed_data$data2
 
 # Export processed data
 write.csv(data1, file.path("./Data", paste0("RV_VE_data1_", date_suffix, ".csv")), row.names = FALSE)
-write.csv(data2, file.path("./Data", paste0("RV_VE_data2_", date_suffix, ".csv")), row.names = FALSE)
 
 # Prepare the global prediction data
 result <- prepare_global_prediction_data(data_pred, data2, save_dir = results_dir)
 data_pred <- result$data_pred
 data2 <- result$data2
+write.csv(data2, file.path("./Data", paste0("RV_VE_data2_", date_suffix, ".csv")), row.names = FALSE)
 SD_pred <- result$SD_pred
 
 #######################################################################
