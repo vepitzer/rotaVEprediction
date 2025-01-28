@@ -1,2 +1,2 @@
 # rotaVEprediction
-TO BE UPDATED WHEN THE LEAD AUTHOR (OTTAVIA PRUNAS) RETURNS FROM MATERNITY LEAVE.
+This repository implements the methods described in the paper: "Global estimates of rotavirus vaccine efficacy and effectiveness: a meta-regression analysis".
